@@ -128,12 +128,23 @@ const server = createServer((req, res) => {
         return;
     }
 
-    const fullUrl = new URL(req.url, `http://${req.headers.host}`);
-    const pathName = fullUrl.pathname;
-    if (!pathName) return;
+    if (req.url === "/" || req.url === "/health") {
+        response.message = "Server is running!";
+        responseFromServer(req, res, response);
+        return;
+    }
+
+    const fullUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     const queryParams = fullUrl.searchParams;
     const url = queryParams.get("url");
-    console.log(url);
+
+    if (!url) {
+        response.status = 404;
+        response.message = "Route Not Found";
+        responseFromServer(req, res, response);
+        return;
+    }
+
     let body = "";
     req.on("data", (buffet) => {
         body += buffet.toString();
@@ -150,9 +161,15 @@ const server = createServer((req, res) => {
             .then((result) =>
                 responseFromServer(req, res, {
                     status: 200,
-                    data: result.data,
+                    data: result?.data ?? result,
                 }),
-            );
+            )
+            .catch((err) => {
+                responseFromServer(req, res, {
+                    status: 500,
+                    message: err.message,
+                });
+            });
     });
 });
 
