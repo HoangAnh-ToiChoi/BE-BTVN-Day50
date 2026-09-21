@@ -25,12 +25,17 @@ function responseFromServer(req, res, data) {
 
     // const allowOrigin = isAllowed ? originHeader : originHeader || "*";
 
-    res.writeHead(data.status, {
+    const headers = {
         "Content-Type": "Application/json",
-        "Access-Control-Allow-Origin": allowOrigin || "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    });
+    };
+
+    if (allowOrigin) {
+        headers["Access-Control-Allow-Origin"] = allowOrigin;
+        headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+    }
+
+    res.writeHead(data.status, headers);
 
     res.end(JSON.stringify(data));
 }
