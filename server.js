@@ -27,7 +27,7 @@ function responseFromServer(req, res, data) {
 
     res.writeHead(data.status, {
         "Content-Type": "Application/json",
-        "Access-Control-Allow-Origin": allowOrigin,
+        "Access-Control-Allow-Origin": allowOrigin || "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
     });
