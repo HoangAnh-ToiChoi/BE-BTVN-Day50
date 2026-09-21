@@ -11,17 +11,19 @@ let db = {
 
 const allowOrigins = [
     "http://localhost:5173",
-    "https://HoangAnh-ToiChoi.github.io",
+    "https://hoanganh-toichoi.github.io",
 ];
 
 function responseFromServer(req, res, data) {
     const originHeader = req.headers?.origin;
 
-    const isAllowed = originHeader && allowOrigins.some(
-        (_origin) => _origin.toLowerCase() === originHeader.toLowerCase()
-    );
+    const allowOrigin =
+        originHeader &&
+        allowOrigins.find(
+            (_origin) => _origin.toLowerCase() === originHeader.toLowerCase(),
+        );
 
-    const allowOrigin = isAllowed ? originHeader : (originHeader || "*");
+    // const allowOrigin = isAllowed ? originHeader : originHeader || "*";
 
     res.writeHead(data.status, {
         "Content-Type": "Application/json",
