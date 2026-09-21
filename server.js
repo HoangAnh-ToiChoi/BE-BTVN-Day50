@@ -3,9 +3,9 @@ import { createServer } from "node:http";
 let taskId = 1;
 let db = {
     taskList: [
-        // { id: 1, title: "dọn nhà", isCompelete: false },
-        // { id: 2, title: "Xây nhà", isCompelete: false },
-        // { id: 3, title: "phá nhà", isCompelete: false },
+        { id: 1, title: "dọn nhà", isCompelete: false },
+        { id: 2, title: "Xây nhà", isCompelete: false },
+        { id: 3, title: "phá nhà", isCompelete: false },
     ],
 };
 
@@ -17,11 +17,11 @@ const allowOrigins = [
 function responseFromServer(req, res, data) {
     const originHeader = req.headers?.origin;
 
-    const allowOrigin = originHeader
-        ? allowOrigins.find(
-              (_origin) => _origin.toLowerCase() === originHeader.toLowerCase(),
-          ) || "*"
-        : "*";
+    const isAllowed = originHeader && allowOrigins.some(
+        (_origin) => _origin.toLowerCase() === originHeader.toLowerCase()
+    );
+
+    const allowOrigin = isAllowed ? originHeader : (originHeader || "*");
 
     res.writeHead(data.status, {
         "Content-Type": "Application/json",
@@ -134,7 +134,10 @@ const server = createServer((req, res) => {
         return;
     }
 
-    const fullUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const fullUrl = new URL(
+        req.url,
+        `http://${req.headers.host || "localhost"}`,
+    );
     const queryParams = fullUrl.searchParams;
     const url = queryParams.get("url");
 
